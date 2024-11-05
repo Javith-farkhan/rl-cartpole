@@ -14,7 +14,7 @@ i) 0: Push cart to the left
 ii) 1: Push cart to the right
 
 ## MONTE CARLO CONTROL ALGORITHM FOR CART POLE BALANCING
-```py
+```
 Name: Javith farkhan S
 Reg No: 212221240017
 ```
