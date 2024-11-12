@@ -4,7 +4,6 @@
 To develop and fine tune the Monte Carlo algorithm to stabilize the Cart Pole.
 
 ## PROBLEM STATEMENT
-
 This environment corresponds to the version of the cart-pole problem described by Barto, Sutton, and Anderson in “Neuronlike Adaptive Elements That Can Solve Difficult Learning Control Problem”. A pole is attached by an un-actuated joint to a cart, which moves along a frictionless track. The pendulum is placed upright on the cart and the goal is to balance the pole by applying forces in the left and right direction on the cart.
 
 The action is a ndarray with shape (1,) which can take values {0, 1} indicating the direction of the fixed force the cart is pushed with.
@@ -18,7 +17,8 @@ ii) 1: Push cart to the right
 Name: Javith farkhan S
 Reg No: 212221240017
 ```
-```py
+
+```Python
 def create_bins(n_bins=g_bins, n_dim=4):
 
     bins = [
@@ -30,7 +30,8 @@ def create_bins(n_bins=g_bins, n_dim=4):
 
     return bins
 ```
-```py
+
+```Python
 def discretize_state(observation, bins):
 
     binned_state = []
@@ -41,7 +42,8 @@ def discretize_state(observation, bins):
 
     return tuple(binned_state)
 ```
-```py
+
+```Python
 def decay_schedule(
     init_value, min_value, decay_ratio,
     max_steps, log_start = -2, log_base=10):
@@ -56,7 +58,8 @@ def decay_schedule(
 
     return values
 ```
-```py
+
+```Python
 def generate_trajectory(
     select_action, Q, epsilon,
     env, max_steps=200):
@@ -88,11 +91,11 @@ def generate_trajectory(
 ```
 
 ## MONTE CARLO CONTROL FUNCTION
-```py
+```Python
 def mc_control (env,n_bins=g_bins, gamma = 1.0,
                 init_alpha = 0.5,min_alpha = 0.01, alpha_decay_ratio = 0.5,
-                init_epsilon = 1.0, min_epsilon = 0.1, epsilon_decay_ratio = 0.5,
-                n_episodes = 9000, max_steps = 800, first_visit = True, init_Q=None):
+                init_epsilon = 1.0, min_epsilon = 0.1, epsilon_decay_ratio = 0.9,
+                n_episodes = 3000, max_steps = 200, first_visit = True, init_Q=None):
     
     nA = env.action_space.n
     discounts = np.logspace(0, max_steps,
@@ -130,7 +133,8 @@ def mc_control (env,n_bins=g_bins, gamma = 1.0,
         
         visited = np.zeros([n_bins]*env.observation_space.shape[0] + [env.action_space.n],dtype =np.float64)
         for t, (state, action, reward, _, _) in enumerate(trajectory):
-   
+            #if visited[tuple(state)][action] and first_visit:
+            #    continue    
             visited[tuple(state)][action] = True
             n_steps = len(trajectory[t:])
             G = np.sum(discounts[:n_steps]*trajectory[t:, 2])
@@ -140,9 +144,9 @@ def mc_control (env,n_bins=g_bins, gamma = 1.0,
         pi_track.append(np.argmax(Q, axis=env.observation_space.shape[0]))
         if e != 0:
             mean_steps_balanced = steps_balanced_total/e
-
+        #progress_bar.set_postfix(episode=e, Epsilon=epsilons[e], Steps=f"{len(trajectory)}" ,MeanStepsBalanced=f"{mean_steps_balanced:.2f}", NonZeroValues="{0}/{1}".format(n_nonzero_elements,n_elements))
         progress_bar.set_postfix(episode=e, Epsilon=epsilons[e], StepsBalanced=f"{len(trajectory)}" ,MeanStepsBalanced=f"{mean_steps_balanced:.2f}")
-    print("Name: Javith farkhan S     Reg.No:212221240017)    
+        
     print("mean_steps_balanced={0},steps_balanced_total={1}".format(mean_steps_balanced,steps_balanced_total))
     V = np.max(Q, axis=env.observation_space.shape[0])
     pi = lambda s:{s:a for s, a in enumerate(np.argmax(Q, axis=env.observation_space.shape[0]))}[s]
@@ -151,10 +155,16 @@ def mc_control (env,n_bins=g_bins, gamma = 1.0,
 ```
 
 ## OUTPUT:
-![](all.png)
-![](second.png)
-![](withoutusingQ.png)
+1. Specify the average number of steps achieved within two minutes when the Monte Carlo (MC) control algorithm is initiated with zero-initialized Q-values.
+ ![image](https://github.com/EASWAR17/rl-cartpole/assets/94154683/355b8f72-c82c-4cdf-84e3-245783ceff37)
+
+2. Mention the average number of steps maintained over a four-minute period when the Monte Carlo (MC) control algorithm is executed with pretrained Q-values.
+ ![image](https://github.com/EASWAR17/rl-cartpole/assets/94154683/4be650cf-4558-4b22-9f92-0e56f5b0dbf5)
+
+3. In your submission text, mention the average number of steps maintained over a four-minute period when the Monte Carlo (MC) control algorithm is executed with pretrained Q-values.
+ ![image](https://github.com/EASWAR17/rl-cartpole/assets/94154683/b10978cb-ba6b-4dc4-8240-af483cea2716)
+
+
 
 ## RESULT:
-
 Thus, a Python program is developed to find the optimal policy for the given cart-pole environment using the Monte Carlo algorithm.
